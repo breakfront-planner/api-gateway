@@ -2,33 +2,37 @@ package main
 
 import (
 	"context"
+	"log/slog"
+	"os"
 	"os/signal"
 	"syscall"
-	//"github.com/breakfront-planner/api-gateway/internal/app"
+	"time"
+
+	"github.com/breakfront-planner/api-gateway/internal/app"
 )
 
 func main() {
-	_, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
-	/*
 
-		application, err := app.New(ctx)
-		if err != nil {
-			log.Println("error while inject dependencies: ", err)
-			os.Exit(1)
-		}
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 
-		if err := application.Start(ctx); err != nil {
-			log.Println("running the program: ", err)
-			os.Exit(1)
-		}
+	application, err := app.New(ctx, logger)
+	if err != nil {
+		logger.Error("error while inject dependencies", "error", err)
+		os.Exit(1)
+	}
 
-		closeCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		defer cancel()
+	if err := application.Start(ctx); err != nil {
+		logger.Error("running the program", "error", err)
+		os.Exit(1)
+	}
 
-		if err := application.Close(closeCtx); err != nil {
-			log.Println("closing the program: ", err)
-		}
-		log.Println("application stopped")
-	*/
+	closeCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	if err := application.Close(closeCtx); err != nil {
+		logger.Error("closing the program", "error", err)
+	}
+	logger.Info("application stopped")
 }
