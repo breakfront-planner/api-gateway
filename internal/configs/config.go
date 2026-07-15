@@ -12,11 +12,11 @@ import (
 const configPath = ".env"
 
 type Configuration struct {
-	httpServer httpServerConfig
+	HTTPServer HTTPServerConfig
 	//Gateway GatewayConfig
 }
 
-type httpServerConfig struct {
+type HTTPServerConfig struct {
 	Address             string   `env:"HTTP_SERVER_ADDRESS"`
 	ReadTimeoutSeconds  uint     `env:"HTTP_SERVER_READ_TIMEOUT" envDefault:"30"`
 	WriteTimeoutSeconds uint     `env:"HTTP_SERVER_WRITE_TIMEOUT" envDefault:"30"`
@@ -57,7 +57,7 @@ func loadEnvFile(path string) error {
 func (c *Configuration) validate() error {
 	var errs []error
 
-	if c.httpServer.Address == "" {
+	if c.HTTPServer.Address == "" {
 		errs = append(errs, errors.New("token: HTTP_SERVER_ADDRESS is required"))
 	}
 
